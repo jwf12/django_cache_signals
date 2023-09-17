@@ -1,7 +1,4 @@
-from typing import Any
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import  redirect
 from django.views import generic
 from .models import *
 
@@ -10,7 +7,6 @@ from django.utils.decorators import method_decorator
 
 
 from django.db.models import F
-
 
 
 class ListarProductos(generic.ListView):
@@ -22,10 +18,8 @@ class ListarProductos(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["carritos"] = Carrito.objects.all()
         return context
-    
 
-
-
+#Manejo del carrito
 class CrearProductos(generic.ListView):
     model = Producto
     template_name = 'index.html'
