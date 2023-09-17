@@ -1,4 +1,5 @@
 from typing import Any
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.views import generic
@@ -24,15 +25,15 @@ class ListarProductos(generic.ListView):
     
 
 
+
 class CrearProductos(generic.ListView):
     model = Producto
     template_name = 'index.html'
 
-    
+    @method_decorator(cache_page(60*15, cache='default', key_prefix='prod_added'), name='dispatch')
     def get(self, request, *args, **kwargs):
         producto_id = self.kwargs['producto_id']
         producto = Producto.objects.get(pk=producto_id)
-        
         #Busco si el producto existe en el carrito
         carrito_obj = Carrito.objects.filter(number=producto.number).first()
 
@@ -49,8 +50,35 @@ class CrearProductos(generic.ListView):
      
 
 
+
+
+# class CrearCarrito(generic.CreateView):
+#     model = Producto
+#     template_name = 'index.html'
+
+#     def get(self, request, *args, **kwargs):
+#         producto = get_object_or_404(Producto, pk=kwargs['pk'])
+
+#         #se crea el carrito o se busca uno existente
+#         carrito, creado = Carrito.objects.get_or_create(id=1)
+#         carrito.items.add(producto)
+
+#         item_existe = ItemCarrito.objects.filter(producto=producto, carrito=carrito)
+        
+#         if item_existe:
+#             item = item_existe.first()
+#             item.cantidad_item += 1
+#             item.save()
+#         else:
+#             item_nuevo = ItemCarrito(carrito_item=carrito, producto_item=producto)
+#             item_nuevo.save()
+
+
+#         return reverse_lazy('signals:home')
+
+
 #Funcion de PRUEBA para checkear con debug_TOOLBAR
-#@cache_page(0, cache='default', key_prefix="prod_added")
-# def crearProducto(request):    
+# @cache_page(0, cache='default', key_prefix="prod_added")
+# def crear(request):    
 #     productos = Producto.objects.all()
 #     return HttpResponse(f'<html><body><h1> {len(productos)} </h1></body></html>')
